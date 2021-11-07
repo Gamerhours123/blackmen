@@ -4880,6 +4880,7 @@ aimbot:Element("Toggle", "teammates")
 aimbot:Element("Toggle", "auto baim") 
 aimbot:Element("Toggle", "knifebot") 
 aimbot:Element("Slider", "prediction hitchance", {min = 0, max = 400, default = 50})
+aimbot:Element("Dropdown", "autowall type", {options = {"buggy", "standard", "off"}})
 
 local weapons = rage:MSector("weapons", "Left") 
 local default = weapons:Tab("default") 
@@ -4991,6 +4992,23 @@ end)()
 local exploits = rage:Sector("exploits", "Left") 
 exploits:Element("ToggleKeybind", "Triple Tap")
 exploits:Element("ToggleKeybind", "kill all")
+local AutoPeek = {
+    OldPeekPosition = CFrame.new()
+}
+
+exploits:Element("ToggleKeybind","auto peek",{},function(tbl)
+	if tbl.Toggle and tbl.Active and LocalPlayer.Character then
+        AutoPeek.OldPeekPosition = LocalPlayer.Character.HumanoidRootPart.CFrame
+	end
+end)
+
+OldClientFireBullet = Client.firebullet
+Client.firebullet = function(...)
+    if values.rage.exploits["auto peek"].Toggle and values.rage.exploits["auto peek"].Active and LocalPlayer.Character then
+        LocalPlayer.Character.HumanoidRootPart.CFrame = AutoPeek.OldPeekPosition
+    end
+    return OldClientFireBullet(...)
+end
 
 
 local players = visuals:Sector("players", "Left") 
